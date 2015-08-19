@@ -41,4 +41,4 @@ Creative Commons CC0
 (http://creativecommons.org/publicdomain/zero/1.0/legalcode</)
 
 #### AUTHOR
-James Sainsbury
+[James Sainsbury](mailto:toves@sdf.lonestar.org)
