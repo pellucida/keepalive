@@ -10,16 +10,11 @@
 # if	!defined(KEEPALIVECFG_H)
 # define	KEEPALIVECFG_H
 
-/* If we are building a shared library */
-# if	!defined( SOLIB)
-# define	SOLIB	
-# endif
-
-# define	LIBKEEPALIVE_CFG	"/proxy/keep.cfg"
+# define	LIBKEEPALIVE_CFG	"/tmp/" "/proxy/keep.cfg"
 typedef	struct	cfg_kl	CFG_KL;
 typedef      struct  sockaddr_in     SOCKADDR;
 typedef	in_addr_t	h_addr_t;	
 
-SOLIB	int	cfg_init (CFG_KL** cfp, char* cfgfile);
-SOLIB	int	cfg_parameters (CFG_KL* cf, int sd, int type, __CONST_SOCKADDR_ARG sock, socklen_t len, int*, int*, int*, int*);
+int	cfg_init (CFG_KL** cfp, char* cfgfile);
+int	cfg_parameters (CFG_KL* cf, int sd, int type, __CONST_SOCKADDR_ARG sock, socklen_t len, int*, int*, int*, int*);
 # endif

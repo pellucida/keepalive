@@ -1,0 +1,10 @@
+
+2015-08-18
+	Fixed const/cast problem with SOCKADDR arguments in libkeepalive.c
+	(The sockaddr_xxx structures are now in a transparent union)
+	
+	Restricted visibility of all symbols to the shared library
+	except for the intercepted functions connect and accept
+	using the gcc switch -fvisibility and __attribute__((visibility= ...
+	feature.
+	

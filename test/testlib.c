@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -16,8 +17,8 @@ int main(int argc, char* argv[])
    struct addrinfo h;
 	char buf [128];
    int	rv	= 0;
-   char*	addr	= "129.78.76.34";
-   char*	port	= "22";
+   char*	addr	= "8.8.8.8";
+   char*	port	= "53";
    if (argc == 3) {
 	addr	= argv[1];
 	port	= argv[2];

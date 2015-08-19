@@ -17,16 +17,13 @@
 # include	"new.h"
 # include	"cfile.h"
 
-# if	!defined(SOLIB)
-# define	SOLIB
-# endif
 struct	cfile {
 	size_t	size;
 	size_t	pos;
 	char*	data;
 };
 
-SOLIB
+
 int	cfile_open (CFILE** cfp, char* file) {
 	int	result	= err;
 	CFILE*	cf	= 0;
@@ -50,7 +47,7 @@ int	cfile_open (CFILE** cfp, char* file) {
 	}
 	return	result;
 }
-SOLIB
+
 int	cfile_close (CFILE* cf) {
 	int	result	= munmap (cf->data, cf->size);
 	cf->data	= 0;
@@ -60,7 +57,7 @@ int	cfile_close (CFILE* cf) {
 	return	result;
 }
 
-SOLIB
+
 int	cfile_getline (CFILE* cf, char* line, size_t linesz) {
 	int	result	= EOF;
 	size_t	size	= cf->size;

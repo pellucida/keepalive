@@ -23,11 +23,6 @@
 # include	"portlist.h"
 # include	"keepalivecfg.h"
 
-/* if we are building a shared library */
-# if	!defined( SOLIB)
-# define	SOLIB
-# endif
-
 /*
 // Convert a string usually ip address or fqdn to in_addr_t (NBO)
 */
@@ -139,7 +134,7 @@ struct	cfg_kl {
 	KLENTRY*	cfg;	
 }; 
 
-SOLIB int	cfg_Create (CFG_KL** cfp, size_t desired) {
+int	cfg_Create (CFG_KL** cfp, size_t desired) {
 	int	result	= err;
 	size_t	n	= desired < KLENTRY_SIZEMIN ? KLENTRY_SIZEMIN : desired;
 	CFG_KL*	cf	= 0;
@@ -307,7 +302,6 @@ static	int	cfg_parseline (CFG_KL* pcf, char* line) {
 	return	cfg_append (pcf, type, destip, mask, portlist, so_keepalive, tcp_idle, tcp_intvl, tcp_cnt);
 }
 
-SOLIB
 int	cfg_init (CFG_KL** cfp, char* cfgfile) {
 	CFG_KL*	cf	= 0;
 	int	result	= cfg_Create (&cf, 0);
@@ -338,7 +332,6 @@ int	cfg_init (CFG_KL** cfp, char* cfgfile) {
 //	Return true if match found; false otherwise
 */
 
-SOLIB
 int	cfg_parameters (CFG_KL* cf, int sd, int type,
 		__CONST_SOCKADDR_ARG sock, socklen_t len,
 		int* pso_keepalive,

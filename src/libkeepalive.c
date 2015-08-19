@@ -22,6 +22,17 @@
 # include	"constants.h"
 # include	"keepalivecfg.h"
 
+/*
+//	We use gcc's -fvisibility=hidden switch to hide functions
+//	local to this shared library and explicity export the two
+//	intercepted functions "connect" and "accept"
+*/ 
+# if	defined(__GNUC__)
+# define	EXPORT	__attribute((visibility("default")))
+# else
+# define	EXPORT
+# endif
+
 static	CFG_KL*	cf		= 0;
 static	int	cf_status	= ok;
 
@@ -85,7 +96,7 @@ static	int	socket_family(__CONST_SOCKADDR_ARG sock) {
 	return	s->sa_family;
 }
 
-int     connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
+int    EXPORT	connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
 	int	stype	= socket_type (sd);
 	int	family	= socket_family (sock);
 	int	result	= call_real_connect (sd, sock, len);
@@ -106,9 +117,15 @@ int     connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
 	}
 	return	result;
 }
-int     accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
+int     EXPORT	accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
+/*
+//	We cast this to a constant structure once to save the same gymnastics
+//	in two places. Since the sockaddr became a transparent union the
+//	compiler chokes otherwise.
+*/
+	__CONST_SOCKADDR_ARG	csock	= *(__CONST_SOCKADDR_ARG*)(&sock);
 	int	stype	= socket_type (sd);
-	int	family	= socket_family ( *(__CONST_SOCKADDR_ARG*)(&sock));
+	int	family	= socket_family (csock);
 	int	result	= call_real_accept (sd, sock, lenp);
 	int	found	= false;
 	int	so_keepalive	= 0;
@@ -120,7 +137,8 @@ int     accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
 			cf_status	= cfg_init (&cf, LIBKEEPALIVE_CFG);
 		}
 		if (cf_status==ok) 
-			found	= cfg_parameters (cf, sd, 'A', sock, *lenp, &so_keepalive, &tcp_idle, &tcp_intvl, &tcp_cnt );
+			found	= cfg_parameters (cf, sd, 'A', csock, *lenp,
+				&so_keepalive, &tcp_idle, &tcp_intvl, &tcp_cnt );
 		if (found && so_keepalive)
 			set_keepalive (result, tcp_idle, tcp_intvl, tcp_cnt);
 	}

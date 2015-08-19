@@ -10,13 +10,9 @@
 # if	!defined( CFILE_H)
 # define	CFILE_H
 
-# if	!defined( SOLIB)
-# define	SOLIB
-# endif
-
 typedef	struct	cfile	CFILE;
-SOLIB	int	cfile_open (CFILE** cfp, char* file);
-SOLIB	int	cfile_close (CFILE* cf);
-SOLIB	int	cfile_getline (CFILE* cf, char* line, size_t linesz);
+int	cfile_open (CFILE** cfp, char* file);
+int	cfile_close (CFILE* cf);
+int	cfile_getline (CFILE* cf, char* line, size_t linesz);
 
 #endif

@@ -15,10 +15,6 @@
 # include	"new.h"
 # include	"portlist.h"
 
-/* If we are building a shared library */
-# if	!defined( SOLIB)
-# define	SOLIB
-# endif
 enum	{
 	PORTLIST_MINSIZE	= 4
 };
@@ -38,7 +34,7 @@ struct	portlist {
 /*
 //	Create the list as empty - full is negated empty
 */
-SOLIB int	portlist_Create (PORTLIST** plp) {
+int	portlist_Create (PORTLIST** plp) {
 	PORTLIST*	pl	= 0;
 	int	result	= New(pl);
 	if (result==ok) {
@@ -62,7 +58,7 @@ static	int	portlist_resize (PORTLIST* pl, size_t size) {
 		pl->size	= size;
 	return	result;
 }
-SOLIB int	portlist_append_range (PORTLIST* pl, h_port_t low, h_port_t high) {
+int	portlist_append_range (PORTLIST* pl, h_port_t low, h_port_t high) {
 	int	result	= ok;
 	size_t	used	= pl->used;
 	size_t	size	= pl->size;
@@ -79,10 +75,10 @@ SOLIB int	portlist_append_range (PORTLIST* pl, h_port_t low, h_port_t high) {
 	}
 	return	result;
 }
-SOLIB int	portlist_append_port (PORTLIST* pl, h_port_t port) {
+int	portlist_append_port (PORTLIST* pl, h_port_t port) {
 	return	portlist_append_range (pl, port, port);
 }
-SOLIB int	portlist_negate (PORTLIST* pl) {
+int	portlist_negate (PORTLIST* pl) {
 	int	result	= pl->negated;
 	pl->negated	= true;
 	return	result;
@@ -108,7 +104,7 @@ int	portlist_print (PORTLIST* pl, FILE* output) {
 	return	0;
 }
 # endif
-SOLIB int	portlist_contains (PORTLIST* pl, h_port_t port) {
+int	portlist_contains (PORTLIST* pl, h_port_t port) {
 	int	result	= false;
 	PORTRANGE*	pr	= pl->ports;
 	if (pr != 0) {
