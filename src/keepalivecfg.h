@@ -10,7 +10,10 @@
 # if	!defined(KEEPALIVECFG_H)
 # define	KEEPALIVECFG_H
 
+# if  !defined(LIBKEEPALIVE_CFG)
 # define	LIBKEEPALIVE_CFG	"/proxy/keep.cfg"
+# endif
+
 typedef	struct	cfg_kl	CFG_KL;
 typedef      struct  sockaddr_in     SOCKADDR;
 typedef	in_addr_t	h_addr_t;	
