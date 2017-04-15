@@ -4,8 +4,8 @@ Routers and firewalls dropping tcp connection after a short period
 (eg five minutes) is a problem for applications that don't have
 configurable application or tcp keepalive options.
 
-Fabio Busatto's libkeepalive intercept library [http://libkeepalive.sourceforge.net]
-(http://libkeepalive.sourceforge.net)
+Fabio Busatto's libkeepalive intercept library
+[http://libkeepalive.sourceforge.net](http://libkeepalive.sourceforge.net)
 works by intercepting function calls to `socket(2)` and
 setting the keepalive parameters using `setsockopt(2)`. 
 
@@ -39,9 +39,7 @@ are taken from the file.
 Not thread aware in any way (ie not reentrant or async safe.) So only suitable for single threaded processes. Connect(2) or accept(2) shouldn't be called directly or indirectly from signal handlers. 
 
 #### LICENSE
-Creative Commons CC0
-[http://creativecommons.org/publicdomain/zero/1.0/legalcode]
-(http://creativecommons.org/publicdomain/zero/1.0/legalcode</)
+[Creative Commons CC0](http://creativecommons.org/publicdomain/zero/1.0/legalcode)
 
 #### AUTHOR
 [James Sainsbury](mailto:toves@sdf.lonestar.org)
