@@ -1,6 +1,7 @@
 
 CC=gcc
 CFLAGS=-fPIC -fvisibility=hidden -DLIBKEEPALIVE_CFG=\"/proxy/keepalive.cfg\"
+
 LDFLAGS=-shared -Wl,-soname,libkeepalive.so
 LDLIBS=-ldl
 OBJ	= libkeepalive.o keepalivecfg.o cfile.o portlist.o

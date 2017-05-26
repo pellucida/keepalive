@@ -13,6 +13,7 @@
 # include	<errno.h>
 # include	<stdlib.h>
 # include	<strings.h>
+# include	<unistd.h>
 # include	<sys/types.h>
 # include	<sys/socket.h>
 # include	<netinet/in.h>
@@ -22,46 +23,25 @@
 # include	"constants.h"
 # include	"keepalivecfg.h"
 
-/*
-//	We use gcc's -fvisibility=hidden switch to hide functions
-//	local to this shared library and explicity export the two
-//	intercepted functions "connect" and "accept"
-*/ 
-# if	defined(__GNUC__)
-# define	EXPORT	__attribute((visibility("default")))
-# else
-# define	EXPORT
-# endif
-
 static	CFG_KL*	cf		= 0;
 static	int	cf_status	= ok;
 
 typedef	int	(*CONNECT_FN)(int, __CONST_SOCKADDR_ARG, socklen_t);
 typedef	int	(*ACCEPT_FN)(int, __SOCKADDR_ARG, socklen_t*);
 
-static  int call_real_connect(int sd, __CONST_SOCKADDR_ARG sa, socklen_t len){
-	static	void*	libc_connect	= 0;
-	if (!libc_connect) {
-		libc_connect	= dlsym(RTLD_NEXT, "connect");
-		if(dlerror()) {
-			errno = EACCES;
-			return 	err;
-		}
+static	CONNECT_FN	libc_connect	= 0;
+static	ACCEPT_FN	libc_accept	= 0;
+
+void __attribute__((constructor, visibility("hidden")))	keepalive_init(void) {
+	libc_connect	= dlsym (RTLD_NEXT, "connect");
+	if (dlerror()) {
+		_exit(EXIT_FAILURE);
 	}
-	errno	= 0;
-	return	((CONNECT_FN)libc_connect)(sd,sa,len);
-}
-static  int call_real_accept(int sd, __SOCKADDR_ARG sa, socklen_t* lenp){
-	static	void*	libc_accept	= 0;
-	if (!libc_accept) {
-		libc_accept	= dlsym(RTLD_NEXT, "accept");
-		if(dlerror()) {
-			errno = EACCES;
-			return 	err;
-		}
+	libc_accept	= dlsym (RTLD_NEXT, "accept");
+	if (dlerror()) {
+		_exit(EXIT_FAILURE);
 	}
-	errno	= 0;
-	return	((ACCEPT_FN)libc_accept)(sd,sa,lenp);
+	cf_status	= cfg_init (&cf, LIBKEEPALIVE_CFG);
 }
 
 static	int	set_keepalive (int sd,
@@ -96,28 +76,25 @@ static	int	socket_family(__CONST_SOCKADDR_ARG sock) {
 	return	s->sa_family;
 }
 
-int    EXPORT	connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
+int	__attribute__((visibility("default"))) connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
 	int	stype	= socket_type (sd);
 	int	family	= socket_family (sock);
-	int	result	= call_real_connect (sd, sock, len);
+	int	result	= libc_connect (sd, sock, len);
 	int	found	= false;
 	int	so_keepalive	= 0;
 	int	tcp_idle	= 0;
 	int	tcp_intvl	= 0;
 	int	tcp_cnt		= 0;
 	if (result == ok && family == AF_INET && stype == SOCK_STREAM) {
-		if (cf==0 && cf_status==ok) {
-			cf_status	= cfg_init (&cf, LIBKEEPALIVE_CFG);
-		}
 		if (cf_status==ok) 
 			found	= cfg_parameters (cf, sd, 'C', sock, len, &so_keepalive, &tcp_idle, &tcp_intvl, &tcp_cnt );
-		
 		if (found && so_keepalive)
 			set_keepalive (sd, tcp_idle, tcp_intvl, tcp_cnt);
 	}
 	return	result;
 }
-int     EXPORT	accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
+
+int	__attribute__((visibility("default"))) 	accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
 /*
 //	We cast this to a constant structure once to save the same gymnastics
 //	in two places. Since the sockaddr became a transparent union the
@@ -126,16 +103,13 @@ int     EXPORT	accept (int sd,  __SOCKADDR_ARG sock, socklen_t* lenp) {
 	__CONST_SOCKADDR_ARG	csock	= *(__CONST_SOCKADDR_ARG*)(&sock);
 	int	stype	= socket_type (sd);
 	int	family	= socket_family (csock);
-	int	result	= call_real_accept (sd, sock, lenp);
+	int	result	= libc_accept (sd, sock, lenp);
 	int	found	= false;
 	int	so_keepalive	= 0;
 	int	tcp_idle	= 0;
 	int	tcp_intvl	= 0;
 	int	tcp_cnt		= 0;
 	if (result != err && family == AF_INET && stype == SOCK_STREAM) {
-		if (cf==0 && cf_status==ok) {
-			cf_status	= cfg_init (&cf, LIBKEEPALIVE_CFG);
-		}
 		if (cf_status==ok) 
 			found	= cfg_parameters (cf, sd, 'A', csock, *lenp,
 				&so_keepalive, &tcp_idle, &tcp_intvl, &tcp_cnt );

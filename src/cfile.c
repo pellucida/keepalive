@@ -75,4 +75,3 @@ int	cfile_getline (CFILE* cf, char* line, size_t linesz) {
 	}
 	return result;
 }
-

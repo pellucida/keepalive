@@ -17,13 +17,16 @@
 # define	Dispose(a)	((a)==0||(free(a),(a)=0,ok))
 
 
-/* A single static per file probably cheaper than a static function */
-/* not reentrant - so don't multithread unless tmp__ is tls */
-/* and don't use a function call as one of the args to ReSizeArr() */
-
-static	void*	tmp___	= 0;
-
+static	inline	int	resize_array (void** pa, size_t size) {
+	void*	na	= realloc (*pa, size);
+	int	result	= err;
+	if (na) {
+		*pa	= na;
+		result	= ok;
+	}
+	return	result;
+}
 # define	ReSizeArr(a,n)	\
-	((tmp___ = realloc ((a),n*sizeof((a)[0])))==0?err:((a)=tmp___,ok))
+	resize_array ((void*)&(a), n*sizeof((a)[0]))	
 
 # endif

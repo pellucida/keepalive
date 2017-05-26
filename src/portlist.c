@@ -84,26 +84,6 @@ int	portlist_negate (PORTLIST* pl) {
 	return	result;
 
 }
-# if	defined(DEBUG)
-int	portlist_print (PORTLIST* pl, FILE* output) {
-	PORTRANGE*	pr	= pl->ports;
-	if (pl->negated && !pr) {
-		fprintf (output, "ports(*)\n");
-		return	0;
-	}
-	else if (pr) {
-		size_t	i	= 0;
-		fprintf (output, "ports %d (", pl->used);
-		if (pl->negated)
-			fprintf (output, "!");
-		for (;i < pl->used; ++i) {
-			fprintf (output, "%d-%d,",pr[i].low, pr[i].high);
-		}
-		fprintf (output, ")\n");
-	}
-	return	0;
-}
-# endif
 int	portlist_contains (PORTLIST* pl, h_port_t port) {
 	int	result	= false;
 	PORTRANGE*	pr	= pl->ports;
