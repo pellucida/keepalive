@@ -36,7 +36,12 @@ In this example the ssh matches the second entry and the parameters
 are taken from the file.
 
 #### BUGS
-Not thread aware in any way (ie not reentrant or async safe.) So only suitable for single threaded processes. Connect(2) or accept(2) shouldn't be called directly or indirectly from signal handlers. 
+| Not thread aware in any way (ie not reentrant or async safe.) So only suitable for single threaded processes. Connect(2) or |accept(2) shouldn't be called directly or indirectly from signal handlers.
+
+The initialization code is called from an ELF constructor function ie before main() is invoked 
+which I imagine would be before any additional threads are started.
+After initialization all accesses to statics are read only so I suspect its reasonably
+safe in a threaded program.
 
 #### LICENSE
 [Creative Commons CC0](http://creativecommons.org/publicdomain/zero/1.0/legalcode)
