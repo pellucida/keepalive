@@ -14,9 +14,10 @@ are passed to the process in environment variables.
 
 #### Modifications
 
-Since these parameters only apply to tcp, my take on this approach was to intercept
-only the `connect(2)` and `accept(2)` system calls and to retrieve the parameter
-values from a configuration file instead of from the processes' environment.
+Since these parameters only apply to tcp, my take on this approach was to
+intercept only the `connect(2)` and `accept(2)` system calls and to retrieve
+the parameter values from a configuration file instead of from the processes'
+environment.
 eg
 
     # SSH to 192.94.73.15
