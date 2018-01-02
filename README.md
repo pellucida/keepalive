@@ -38,7 +38,9 @@ are taken from the file.
 
 #### BUGS
 <pre>
-| Not thread aware in any way (ie not reentrant or async safe.) So only suitable for single threaded processes. Connect(2) or |accept(2) shouldn't be called directly or indirectly from signal handlers.
+| Not thread aware in any way (ie not reentrant or async safe.)
+| So only suitable for single threaded processes. Connect(2) or
+| accept(2) shouldn't be called directly or indirectly from signal handlers.
 </pre>
 The initialization code is called from an ELF constructor function ie before main() is invoked 
 which I imagine would be before any additional threads are started.
