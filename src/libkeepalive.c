@@ -70,10 +70,16 @@ static	int	socket_type (int sd) {
 		result  = stype;
 	return  result;
 }
+ 
+// This is the only function that needs use the sock union
+// directly. _GNU_SOURCE sets __USE_GNU (see sys/socket.h)
 
 static	int	socket_family(__CONST_SOCKADDR_ARG sock) {
-	struct	sockaddr*	s	= *(struct sockaddr**)&sock;
-	return	s->sa_family;
+# if	defined(__USE_GNU)
+	return	sock.__sockaddr__->sa_family;
+# else
+	return	sock->sa_family;
+# endif
 }
 
 int	__attribute__((visibility("default"))) connect (int sd,  __CONST_SOCKADDR_ARG sock, socklen_t len) {
